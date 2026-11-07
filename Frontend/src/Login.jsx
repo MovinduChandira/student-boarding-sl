@@ -11,7 +11,10 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Login:", email); // TODO: call your backend here
-    navigate("/"); // after login, go to the home page
+    // Placeholder user until you have a backend
+  const user = { name: "User", email: "user@example.com" };
+  localStorage.setItem("user", JSON.stringify(user));
+  navigate("/dashboard");
   };
 
   const socials = [
