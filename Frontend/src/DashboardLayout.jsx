@@ -5,6 +5,7 @@ import {
   FiChevronsLeft, FiChevronDown, FiCheckSquare, FiUsers,
 } from "react-icons/fi";
 import { Footer } from "./App.jsx";
+import { authApi } from "./api.js";
 
 // Change the "to" paths when you build those pages.
 const menus = {
@@ -51,10 +52,15 @@ export default function DashboardLayout({ role, children }) {
   const showAvatar = role === "student" || role === "owner";
   const showTopBar = role !== "admin";
 
-  function logout() {
-  localStorage.removeItem("user");
-  navigate("/login");
-}
+  async function logout() {
+    try {
+      await authApi.logout(); // clears the login cookie on the server
+    } catch {
+      // Even if the server can't be reached, sign out locally.
+    }
+    localStorage.removeItem("user");
+    navigate("/login", { replace: true });
+  }
   const itemClass = "flex w-full items-center gap-4 px-6 py-4 text-left text-base font-semibold transition-colors";
 
   return (

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Footer } from "./App.jsx";
 import { homeFor } from "./roles.js";
+import { authApi } from "./api.js";
 
 const roles = [
   { value: "student", label: "Student" },
@@ -13,19 +14,35 @@ const fieldClass =
 
 export default function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ role: "student", name: "", email: "", phone: "", password: "" });
+  const [form, setForm] = useState({ role: "student", name: "", email: "", phone: "", nic: "", password: "" });
+  const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Temporary: send `form` to your backend here (POST /register).
-    // For now the new user is saved in the browser and signed in.
-    const user = { name: form.name, email: form.email, phone: form.phone, role: form.role };
-    localStorage.setItem("user", JSON.stringify(user));
-    navigate(homeFor[form.role]);
+    setError("");
+    setFieldErrors({});
+    setLoading(true);
+    try {
+      // NIC is only needed (and only sent) for boarding owners.
+      const payload = { ...form };
+      if (form.role !== "owner") delete payload.nic;
+      const { user } = await authApi.register(payload);
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate(homeFor[user.role]);
+    } catch (err) {
+      setError(err.message);
+      setFieldErrors(err.errors || {});
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const fieldError = (name) =>
+    fieldErrors[name] ? <span className="mt-1 block text-sm font-normal text-red-300">{fieldErrors[name]}</span> : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-linear-to-b from-[#0A4682] from-40% to-[#1B73C4] font-['Albert_Sans',sans-serif] text-white">
@@ -64,15 +81,34 @@ export default function Register() {
               <label className="block text-lg font-bold">
                 Full Name
                 <input type="text" value={form.name} onChange={update("name")} required autoComplete="name" className={fieldClass} />
+                {fieldError("name")}
               </label>
               <label className="block text-lg font-bold">
                 E-mail Address
                 <input type="email" value={form.email} onChange={update("email")} required autoComplete="email" className={fieldClass} />
+                {fieldError("email")}
               </label>
               <label className="block text-lg font-bold">
                 Phone Number
-                <input type="tel" value={form.phone} onChange={update("phone")} required autoComplete="tel" className={fieldClass} />
+                <input type="tel" value={form.phone} onChange={update("phone")} required autoComplete="tel" placeholder="07XXXXXXXX" className={fieldClass} />
+                {fieldError("phone")}
               </label>
+              {form.role === "owner" && (
+                <label className="block text-lg font-bold">
+                  NIC Number
+                  <input
+                    type="text"
+                    value={form.nic}
+                    onChange={update("nic")}
+                    required
+                    placeholder="200012345678 or 991234567V"
+                    pattern="^(\d{9}[VvXx]|\d{12})$"
+                    title="12 digits, or 9 digits followed by V or X"
+                    className={fieldClass}
+                  />
+                  {fieldError("nic")}
+                </label>
+              )}
               <label className="block text-lg font-bold">
                 Password
                 <input
@@ -84,11 +120,21 @@ export default function Register() {
                   autoComplete="new-password"
                   className={fieldClass}
                 />
+                {fieldError("password")}
               </label>
             </div>
 
-            <button className="mt-10 w-full rounded-lg bg-[#869BB0] py-3 text-xl font-bold text-[#0A4682] hover:bg-[#9aadc0]">
-              SignUp
+            {error && (
+              <p role="alert" className="mt-8 rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">
+                {error}
+              </p>
+            )}
+
+            <button
+              disabled={loading}
+              className="mt-10 w-full rounded-lg bg-[#869BB0] py-3 text-xl font-bold text-[#0A4682] hover:bg-[#9aadc0] disabled:cursor-wait disabled:opacity-70"
+            >
+              {loading ? "Creating account..." : "SignUp"}
             </button>
 
             <p className="mt-12 text-center text-lg">
