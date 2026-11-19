@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebookF, FaApple } from "react-icons/fa";
 import { Footer } from "./App.jsx";
 import { homeFor } from "./roles.js";
+import { authApi } from "./api.js";
 
 const socials = [
   { name: "Google", icon: <FaGoogle /> },
@@ -14,16 +15,23 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Temporary: the backend should decide the role from the real account.
-    const mail = email.toLowerCase();
-    const role = mail.includes("admin") ? "admin" : mail.includes("owner") ? "owner" : "student";
-
-    localStorage.setItem("user", JSON.stringify({ name: "User", email, role }));
-    navigate(homeFor[role]);
+    setError("");
+    setLoading(true);
+    try {
+      // The backend checks the password and decides the role from the real account.
+      const { user } = await authApi.login(email, password);
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate(homeFor[user.role]);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,8 +77,17 @@ export default function Login() {
             </Link>
           </div>
 
-          <button className="mt-6 w-full rounded-lg border border-black bg-white py-3.5 text-lg font-bold text-black hover:bg-gray-100">
-            Login
+          {error && (
+            <p role="alert" className="mt-5 rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">
+              {error}
+            </p>
+          )}
+
+          <button
+            disabled={loading}
+            className="mt-6 w-full rounded-lg border border-black bg-white py-3.5 text-lg font-bold text-black hover:bg-gray-100 disabled:cursor-wait disabled:opacity-70"
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
 
           <p className="mt-6 text-center text-lg">Or continue with</p>
