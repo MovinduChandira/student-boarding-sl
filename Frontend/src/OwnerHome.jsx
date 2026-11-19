@@ -44,7 +44,7 @@ export default function OwnerHome() {
           </button>
           <button onClick={() => scrollBy(1)} aria-label="Next listings" className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D9D9D9] text-black hover:bg-white">
             <FiChevronRight size={24} />
-          </button>
+         </button>
         </div>
       </div>
 
