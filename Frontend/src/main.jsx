@@ -11,6 +11,7 @@ import StudentHome from "./StudentHome.jsx";
 import OwnerHome from "./OwnerHome.jsx";
 import AdminDashboard from "./AdminDashboard.jsx";
 import RequireRole from "./RequireRole.jsx";
+import CreateListing from "./CreateListing.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/student-home" element={<RequireRole role="student"><StudentHome /></RequireRole>} />
         <Route path="/owner-home" element={<RequireRole role="owner"><OwnerHome /></RequireRole>} />
         <Route path="/admin-dashboard" element={<RequireRole role="admin"><AdminDashboard /></RequireRole>} />
+        <Route path="/create-listing" element={<RequireRole role="owner"><CreateListing /></RequireRole>} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
