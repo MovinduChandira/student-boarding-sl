@@ -77,35 +77,48 @@ const MailIcon = () => (
 /* ---------- Sections ---------- */
 function Navbar() {
   const [open, setOpen] = useState(false);
+
+  const goToFooter = (e) => {
+    e.preventDefault();
+    document.getElementById("footer")?.scrollIntoView({ behavior: "smooth" });
+    setOpen(false);
+  };
+
   const links = [
     { label: "Home", to: "/" },
     { label: "Login", to: "/login" },
-    { label: "About Us", to: "/about" },
   ];
+
+  const linkStyle =
+    "relative py-1 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-0 after:bg-[#D4A12A] after:transition-all after:duration-300 hover:after:w-full";
+
   return (
     <header className="relative mx-auto flex max-w-[1148px] items-center justify-between px-6 pb-6 pt-8 md:px-12">
       <Link to="/">
         <img src="/images/logo.png" alt="boarding.lk" className="h-[60px] w-[140px] object-contain md:h-[105px] md:w-[253px]" />
       </Link>
+
       <nav className="hidden items-center gap-12 text-lg font-medium text-white md:flex">
-  {links.map((l) => (
-    <Link
-      key={l.label}
-      to={l.to}
-      className="relative py-1 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-0 after:bg-[#D4A12A] after:transition-all after:duration-300 hover:after:w-full"
-    >
-      {l.label}
-    </Link>
-  ))}
-</nav>
+        {links.map((l) => (
+          <Link key={l.label} to={l.to} className={linkStyle}>
+            {l.label}
+          </Link>
+        ))}
+        <a href="#footer" onClick={goToFooter} className={linkStyle}>
+          About Us
+        </a>
+      </nav>
+
       <button className="text-3xl text-white md:hidden" aria-label="Toggle menu" aria-expanded={open} onClick={() => setOpen(!open)}>
         ☰
       </button>
+
       {open && (
         <nav className="absolute left-0 right-0 top-full z-10 flex flex-col gap-4 bg-[#0A3F78] p-6 text-lg text-white md:hidden">
           {links.map((l) => (
             <Link key={l.label} to={l.to} onClick={() => setOpen(false)}>{l.label}</Link>
           ))}
+          <a href="#footer" onClick={goToFooter}>About Us</a>
         </nav>
       )}
     </header>
@@ -148,9 +161,9 @@ function Hero() {
           <a href="#listings" className="flex h-14 w-44 items-center justify-center rounded-full border border-[#1B73C4] bg-[#0A3F78] text-lg font-semibold">
             Explore more
           </a>
-          <a href="#" className="flex h-14 w-44 items-center justify-center rounded-full bg-[#0D7BF0] text-lg font-semibold hover:bg-[#0a68cc]">
-            Join Now
-          </a>
+          <Link to="/Register" className="flex h-14 w-44 items-center justify-center rounded-full bg-[#0D7BF0] text-lg font-semibold hover:bg-[#0a68cc]">
+  Join Now
+</Link>
         </div>
       </div>
 
@@ -274,7 +287,7 @@ export function Footer() {
   { name: "LinkedIn", icon: <FaLinkedinIn />, color: "#000", href: "#" },
 ];
   return (
-    <footer className="bg-[#1B73C4] text-white">
+   <footer id="footer" className="bg-[#1B73C4] text-white">
       <div className="mx-auto grid max-w-[1148px] gap-8 px-6 pb-6 pt-8 md:grid-cols-[1.1fr_0.8fr_0.9fr_1.3fr] md:px-12">
         <div>
           <img src="/images/logo.png" alt="boarding.lk" className="h-14 w-auto" />
