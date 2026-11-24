@@ -1,16 +1,37 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import DashboardLayout from "./DashboardLayout.jsx";
 import ListingCard from "./ListingCard.jsx";
 import { allListings, myListings } from "./listingsData.js";
+import { Link } from "react-router-dom";
+import { listingsApi } from "./api.js";
 
 export default function OwnerHome() {
   const [query, setQuery] = useState("");
+  const [all, setAll] = useState(allListings);
+  const [mine, setMine] = useState(myListings);
+
+  useEffect(() => {
+    listingsApi
+      .getAll()
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setAll(data);
+      })
+      .catch(() => {});
+
+    listingsApi
+      .getMyListings()
+      .then((data) => {
+        if (Array.isArray(data)) setMine(data);
+      })
+      .catch(() => {});
+  }, []);
+
   const scroller = useRef(null);
   const q = query.trim().toLowerCase();
-  const match = (l) => `${l.type} ${l.place}`.toLowerCase().includes(q);
-  const mine = myListings.filter(match);
-  const all = allListings.filter(match);
+  const match = (l) => `${l.type || ""} ${l.place || ""}`.toLowerCase().includes(q);
+  const visibleMine = mine.filter(match);
+  const visibleAll = all.filter(match);
 
   const scrollBy = (dir) => scroller.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
 
@@ -36,9 +57,9 @@ export default function OwnerHome() {
       <div className="mb-5 mt-12 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-4xl font-bold text-[#E5B95C]">My Listings</h2>
         <div className="flex items-center gap-4">
-          <button className="bg-[#2F7FD0] px-5 py-2 text-lg font-semibold text-white hover:bg-[#2569b0]">
+          <Link to="/create-listing" className="bg-[#2F7FD0] px-5 py-2 text-lg font-semibold text-white hover:bg-[#2569b0]">
             + Add New Listings
-          </button>
+          </Link>
           <button onClick={() => scrollBy(-1)} aria-label="Previous listings" className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D9D9D9] text-black hover:bg-white">
             <FiChevronLeft size={24} />
           </button>
@@ -48,21 +69,21 @@ export default function OwnerHome() {
         </div>
       </div>
 
-      {mine.length === 0 ? (
+      {visibleMine.length === 0 ? (
         <p className="text-lg">You have no listings matching this search.</p>
       ) : (
         <div ref={scroller} className="flex gap-6 overflow-x-auto pb-2">
-          {mine.map((l) => <ListingCard key={l.id} item={l} variant="mine" />)}
+          {visibleMine.map((l) => <ListingCard key={l.id} item={l} variant="mine" />)
         </div>
       )}
 
       {/* All Listings */}
       <h2 className="mb-6 mt-14 text-4xl font-bold text-[#E5B95C]">All Listings</h2>
-      {all.length === 0 ? (
+      {visibleAll.length === 0 ? (
         <p className="text-lg">No listings match your search. Try a different location or room type.</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {all.map((l) => <ListingCard key={l.id} item={l} />)}
+          {visibleAll.map((l) => <ListingCard key={l.id} item={l} />)
         </div>
       )}
     </DashboardLayout>
