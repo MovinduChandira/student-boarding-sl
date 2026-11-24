@@ -3,9 +3,12 @@ import { FiHeart, FiMapPin } from "react-icons/fi";
 
 const badgeStyles = {
   Active: "border-[#4CAF50] bg-[#C8F0C8] text-[#1B7A1B]",
+  Approved: "border-[#4CAF50] bg-[#C8F0C8] text-[#1B7A1B]",
+  Pending: "border-[#E08A00] bg-[#FFF3CD] text-[#856404]",
   Occupied: "border-[#E08A00] bg-[#F5A524] text-white",
   Featured: "border-[#C98A4B] bg-[#F7D9B8] text-[#7A4A12]",
   Inactive: "border-black bg-[#D9D9D9] text-black",
+  Rejected: "border-[#dc3545] bg-[#F8D7DA] text-[#721c24]",
 };
 
 /* variant "browse": heart + View Details (student and owner "All Listings")

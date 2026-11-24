@@ -5,9 +5,10 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    // Forward /api/* to the Express backend so the login cookie works in dev
+    // Forward /api/* and /uploads/* to the Express backend
     proxy: {
       "/api": "http://localhost:5000",
+      "/uploads": "http://localhost:5000",
     },
   },
 });

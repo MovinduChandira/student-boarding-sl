@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiCheck, FiChevronDown, FiUser } from "react-icons/fi";
 import { Footer } from "./App.jsx";
+import { listingsApi } from "./api.js";
 
 const propertyTypes = ["Single Room", "Twin Room", "Shared Room", "Shared Dorm"];
 const rentPeriods = ["Monthly", "Weekly", "Daily"];
@@ -62,8 +63,7 @@ export default function CreateListing() {
     navigate("/login");
   }
 
-  function save(status) {
-    // Images need FormData, so the backend should accept multipart/form-data.
+  async function save(status) {
     const data = new FormData();
     Object.entries(form).forEach(([key, value]) =>
       data.append(key, Array.isArray(value) ? JSON.stringify(value) : value)
@@ -71,12 +71,17 @@ export default function CreateListing() {
     data.append("status", status);
     images.forEach((file) => data.append("images", file));
 
-    // TODO: send `data` to your backend, for example:
-    // await fetch(`${API_URL}/listings`, { method: "POST", body: data, headers: { Authorization: `Bearer ${token}` } });
-    console.log("Listing", status, Object.fromEntries(data.entries()));
-
-    setMessage(status === "published" ? "Listing published (demo only, not saved to a server yet)." : "Draft saved (demo only).");
-    if (status === "published") setTimeout(() => navigate("/owner-home"), 1500);
+    try {
+      await listingsApi.create(data);
+      setMessage(
+        status === "published"
+          ? "Listing published! Delivered to Admin for approval."
+          : "Draft saved successfully."
+      );
+      if (status === "published") setTimeout(() => navigate("/owner-home"), 1500);
+    } catch (err) {
+      setMessage(err.message || "Failed to publish listing. Please try again.");
+    }
   }
 
   return (

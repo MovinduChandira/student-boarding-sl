@@ -1,16 +1,27 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiSearch, FiSliders } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout.jsx";
 import ListingCard from "./ListingCard.jsx";
 import { allListings } from "./listingsData.js";
+import { listingsApi } from "./api.js";
 
 export default function StudentHome() {
   const [query, setQuery] = useState("");
+  const [listings, setListings] = useState(allListings);
 
-  const results = allListings.filter((listing) =>
-    `${listing.type} ${listing.place}`
+  useEffect(() => {
+    listingsApi
+      .getAll()
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) setListings(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const results = listings.filter((listing) =>
+    `${listing.type || ""} ${listing.place || ""}`
       .toLowerCase()
       .includes(query.trim().toLowerCase())
   );

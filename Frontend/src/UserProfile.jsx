@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FiUser,
@@ -14,42 +13,38 @@ import {
   FiX,
 } from "react-icons/fi";
 import DashboardLayout from "./DashboardLayout.jsx";
-
-// Sample data for frontend testing
-const sampleProfiles = {
-  student: {
-    name: "Tharu Perera",
-    age: "22",
-    email: "tharu.perera@example.com",
-    phone: "0771234567",
-    university: "University of Sri Jayewardenepura",
-    year: "3rd Year",
-    faculty: "Faculty of Computing",
-  },
-  owner: {
-    name: "John Perera",
-    email: "johnperera@example.com",
-    phone: "0771234567",
-    nic: "200012345678",
-    location: "Maharagama, Colombo",
-    verified: true,
-    plan: "Basic Plan",
-  },
-};
+import { profileApi } from "./api.js";
 
 const inputClass =
   "w-full rounded-md border border-gray-300 bg-[#D9D9D9] px-4 py-2.5 text-gray-900 outline-none focus:ring-2 focus:ring-[#F5C400]";
 
-function loadProfile(role) {
+function getInitialProfile(role) {
+  let user = null;
   try {
-    const saved = JSON.parse(
-      localStorage.getItem(`boarding-profile-${role}`)
-    );
+    user = JSON.parse(localStorage.getItem("user"));
+  } catch {}
 
-    return { ...sampleProfiles[role], ...(saved || {}) };
-  } catch {
-    return { ...sampleProfiles[role] };
+  if (role === "student") {
+    return {
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      age: "",
+      university: "",
+      year: "",
+      faculty: "",
+    };
   }
+
+  return {
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    nic: "",
+    location: "",
+    verified: false,
+    plan: "Basic Plan",
+  };
 }
 
 function ProfileAvatar({ size = "large" }) {
@@ -89,7 +84,7 @@ export default function UserProfile({
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState(() =>
-    loadProfile(role)
+    getInitialProfile(role)
   );
 
   const isStudent = role === "student";
@@ -105,6 +100,27 @@ export default function UserProfile({
     ? `/test-${role}-profile/edit`
     : `/${role}-profile/edit`;
 
+  useEffect(() => {
+    let mounted = true;
+    profileApi
+      .get()
+      .then((data) => {
+        if (mounted && data) {
+          setProfile((prev) => ({
+            ...prev,
+            ...data,
+          }));
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not fetch profile from backend:", err);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [role]);
+
   function updateField(field, value) {
     setProfile((previous) => ({
       ...previous,
@@ -112,17 +128,28 @@ export default function UserProfile({
     }));
   }
 
-  function saveProfile(e) {
+  async function saveProfile(e) {
     e.preventDefault();
 
-    localStorage.setItem(
-      `boarding-profile-${role}`,
-      JSON.stringify(profile)
-    );
+    try {
+      const updated = await profileApi.update(profile);
+      if (updated) {
+        setProfile((prev) => ({ ...prev, ...updated }));
+        try {
+          const user = JSON.parse(localStorage.getItem("user")) || {};
+          user.name = updated.name;
+          user.email = updated.email;
+          user.phone = updated.phone;
+          localStorage.setItem("user", JSON.stringify(user));
+        } catch {}
+      }
 
-    navigate(profilePath, {
-      state: { updated: true },
-    });
+      navigate(profilePath, {
+        state: { updated: true },
+      });
+    } catch (err) {
+      alert(err.message || "Failed to update profile. Please try again.");
+    }
   }
 
   const universities = [
@@ -169,7 +196,7 @@ export default function UserProfile({
               <ProfileAvatar />
 
               <h2 className="text-xl font-bold">
-                {profile.name}
+                {profile.name || "User"}
               </h2>
 
               <p className="text-white/80">
@@ -214,10 +241,10 @@ export default function UserProfile({
                   </label>
 
                   <input
-                    required
                     type="number"
                     min="16"
                     max="100"
+                    placeholder="Enter your age"
                     value={profile.age}
                     onChange={(e) =>
                       updateField("age", e.target.value)
@@ -268,7 +295,6 @@ export default function UserProfile({
                     </label>
 
                     <select
-                      required
                       value={profile.university}
                       onChange={(e) =>
                         updateField("university", e.target.value)
@@ -293,7 +319,6 @@ export default function UserProfile({
                     </label>
 
                     <select
-                      required
                       value={profile.year}
                       onChange={(e) =>
                         updateField("year", e.target.value)
@@ -324,7 +349,6 @@ export default function UserProfile({
                     </label>
 
                     <select
-                      required
                       value={profile.faculty}
                       onChange={(e) =>
                         updateField("faculty", e.target.value)
@@ -368,7 +392,7 @@ export default function UserProfile({
                     </label>
 
                     <input
-                      required
+                      placeholder="Enter your location"
                       value={profile.location}
                       onChange={(e) =>
                         updateField("location", e.target.value)
@@ -422,7 +446,7 @@ export default function UserProfile({
                 <ProfileAvatar />
 
                 <h2 className="text-center text-2xl font-bold">
-                  {profile.name}
+                  {profile.name || "Student"}
                 </h2>
 
                 <p className="text-center text-sm text-white/80">
@@ -518,7 +542,7 @@ export default function UserProfile({
               <ProfileAvatar />
 
               <h2 className="text-center text-2xl font-bold">
-                {profile.name}
+                {profile.name || "Owner"}
               </h2>
 
               <p className="text-sm text-white/80">
@@ -588,11 +612,11 @@ export default function UserProfile({
                 </div>
 
                 <p className="mt-2">
-                  {profile.plan}
+                  {profile.plan || "Basic Plan"}
                 </p>
 
                 <span className="mt-2 inline-block rounded-full bg-[#65A9E0] px-4 py-1 text-sm">
-                  {profile.plan}
+                  {profile.plan || "Basic Plan"}
                 </span>
               </div>
 

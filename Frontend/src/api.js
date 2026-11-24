@@ -5,12 +5,13 @@ const BASE = import.meta.env.VITE_API_URL || "";
 
 export async function api(path, { method = "GET", body } = {}) {
   let res;
+  const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
   try {
     res = await fetch(`${BASE}/api${path}`, {
       method,
       credentials: "include", // send/receive the httpOnly login cookie
-      headers: body ? { "Content-Type": "application/json" } : undefined,
-      body: body ? JSON.stringify(body) : undefined,
+      headers: isFormData ? undefined : (body ? { "Content-Type": "application/json" } : undefined),
+      body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
     });
   } catch {
     throw new Error("Cannot reach the server. Is the backend running?");
@@ -31,4 +32,22 @@ export const authApi = {
   register: (form) => api("/auth/register", { method: "POST", body: form }),
   logout: () => api("/auth/logout", { method: "POST" }),
   me: () => api("/auth/me"),
+};
+
+export const listingsApi = {
+  create: (body) => api("/listings", { method: "POST", body }),
+  getAll: (query) => api(`/listings${query ? `?q=${encodeURIComponent(query)}` : ""}`),
+  getMyListings: () => api("/listings/mine"),
+  getAdminListings: (status) =>
+    api(`/admin/listings${status ? `?status=${encodeURIComponent(status)}` : ""}`),
+  updateApprovalStatus: (id, status, rejectionReason) =>
+    api(`/admin/listings/${id}/status`, {
+      method: "PATCH",
+      body: { status, rejectionReason },
+    }),
+};
+
+export const profileApi = {
+  get: () => api("/profile"),
+  update: (data) => api("/profile", { method: "PUT", body: data }),
 };

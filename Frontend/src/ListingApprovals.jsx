@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   FiHome,
@@ -9,6 +9,7 @@ import {
 } from "react-icons/fi";
 
 import DashboardLayout from "./DashboardLayout.jsx";
+import { listingsApi } from "./api.js";
 
 import {
   getApprovalListings,
@@ -48,12 +49,24 @@ function ListingImage({ src, title }) {
 // ====================================
 
 export default function ListingApprovals() {
-  const [listings, setListings] = useState(
-    getApprovalListings
-  );
-
+  const [listings, setListings] = useState(getApprovalListings);
   const [filter, setFilter] = useState("pending");
   const [message, setMessage] = useState("");
+
+  async function loadListings() {
+    try {
+      const data = await listingsApi.getAdminListings();
+      if (Array.isArray(data)) {
+        setListings(data);
+      }
+    } catch {
+      // Keep sample fallback if backend is unreachable
+    }
+  }
+
+  useEffect(() => {
+    loadListings();
+  }, []);
 
   // ====================================
   // LISTING COUNTS
@@ -79,27 +92,31 @@ export default function ListingApprovals() {
   // APPROVE LISTING
   // ====================================
 
-  function handleApprove(id) {
+  async function handleApprove(id) {
     const confirmed = window.confirm(
       "Are you sure you want to approve this listing?"
     );
 
     if (!confirmed) return;
 
-    const updated = updateListingStatus(
-      id,
-      "approved"
-    );
-
-    setListings(updated);
-    setMessage("Listing approved successfully.");
+    try {
+      await listingsApi.updateApprovalStatus(id, "approved");
+      setListings((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: "approved" } : item
+        )
+      );
+      setMessage("Listing approved successfully.");
+    } catch (err) {
+      alert(err.message || "Failed to approve listing.");
+    }
   }
 
   // ====================================
   // REJECT LISTING
   // ====================================
 
-  function handleReject(id) {
+  async function handleReject(id) {
     const reason = window.prompt(
       "Enter the reason for rejecting this listing:"
     );
@@ -111,14 +128,19 @@ export default function ListingApprovals() {
       return;
     }
 
-    const updated = updateListingStatus(
-      id,
-      "rejected",
-      reason.trim()
-    );
-
-    setListings(updated);
-    setMessage("Listing rejected successfully.");
+    try {
+      await listingsApi.updateApprovalStatus(id, "rejected", reason.trim());
+      setListings((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? { ...item, status: "rejected", rejectionReason: reason.trim() }
+            : item
+        )
+      );
+      setMessage("Listing rejected successfully.");
+    } catch (err) {
+      alert(err.message || "Failed to reject listing.");
+    }
   }
 
   // ====================================
