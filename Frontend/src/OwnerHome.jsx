@@ -73,7 +73,7 @@ export default function OwnerHome() {
         <p className="text-lg">You have no listings matching this search.</p>
       ) : (
         <div ref={scroller} className="flex gap-6 overflow-x-auto pb-2">
-          {visibleMine.map((l) => <ListingCard key={l.id} item={l} variant="mine" />)
+          {visibleMine.map((l) => <ListingCard key={l.id} item={l} variant="mine" />)}
         </div>
       )}
 
@@ -83,7 +83,7 @@ export default function OwnerHome() {
         <p className="text-lg">No listings match your search. Try a different location or room type.</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {visibleAll.map((l) => <ListingCard key={l.id} item={l} />)
+          {visibleAll.map((l) => <ListingCard key={l.id} item={l} />)}
         </div>
       )}
     </DashboardLayout>
