@@ -1,18 +1,8 @@
-
 /*
   Boarding.lk - Listing Data
 
   Temporary frontend data for testing.
-
-  Original listings and owner listings are preserved.
-
-  Additional demo fields:
-  - title
-  - distanceKm
-  - genders
-  - facilities
-
-  Replace sample data with backend data later.
+  Each student listing is connected to an owner ID.
 */
 
 // ==========================================
@@ -22,6 +12,7 @@
 export const allListings = [
   {
     id: 1,
+    ownerId: "OWN001",
     title: "Modern Room near USJ",
     type: "Single Room",
     place: "Nugegoda, Colombo",
@@ -33,6 +24,7 @@ export const allListings = [
   },
   {
     id: 2,
+    ownerId: "OWN002",
     title: "Comfortable Twin Room",
     type: "Twin Room",
     place: "Nugegoda, Colombo",
@@ -44,6 +36,7 @@ export const allListings = [
   },
   {
     id: 3,
+    ownerId: "OWN001",
     title: "Special Shared Room",
     type: "Shared Room",
     place: "Pasal Mawatha, Nugegoda, Colombo",
@@ -55,6 +48,7 @@ export const allListings = [
   },
   {
     id: 4,
+    ownerId: "OWN003",
     title: "Cozy Room for Girls",
     type: "Single Room",
     place: "Maharagama, Colombo",
@@ -66,6 +60,7 @@ export const allListings = [
   },
   {
     id: 5,
+    ownerId: "OWN001",
     title: "Affordable Shared Room",
     type: "Shared Room",
     place: "Treasure garden, Nugegoda, Colombo",
@@ -77,6 +72,7 @@ export const allListings = [
   },
   {
     id: 6,
+    ownerId: "OWN002",
     title: "Spacious Twin Room",
     type: "Twin Room",
     place: "Nugegoda, Colombo",
@@ -88,6 +84,7 @@ export const allListings = [
   },
   {
     id: 7,
+    ownerId: "OWN003",
     title: "Student Shared Dorm",
     type: "Shared Dorm",
     place: "Maharagama, Colombo",
@@ -99,6 +96,7 @@ export const allListings = [
   },
   {
     id: 8,
+    ownerId: "OWN002",
     title: "Private Single Room",
     type: "Single Room",
     place: "Pasal Mawatha, Nugegoda, Colombo",
@@ -157,4 +155,3 @@ export const myListings = [
     img: "/images/twin-room.jpg",
   },
 ];
-

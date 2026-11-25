@@ -1,6 +1,6 @@
-
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+
 import {
   BrowserRouter,
   Routes,
@@ -9,9 +9,7 @@ import {
 
 import "./index.css";
 
-// ====================================
 // SALHA'S EXISTING PROJECT PAGES
-// ====================================
 
 import { Home } from "./App.jsx";
 import Login from "./Login.jsx";
@@ -25,23 +23,26 @@ import AdminDashboard from "./AdminDashboard.jsx";
 import RequireRole from "./RequireRole.jsx";
 import CreateListing from "./CreateListing.jsx";
 
-// ====================================
 // STUDENT FILTERS
-// ====================================
 
 import StudentFilters from "./StudentFilters.jsx";
 
-// ====================================
 // STUDENT AND OWNER PROFILE
-// ====================================
 
 import UserProfile from "./UserProfile.jsx";
 
-// ====================================
-// ADMIN LISTING APPROVALS - NEW MODULE
-// ====================================
+// ADMIN LISTING APPROVALS
 
 import ListingApprovals from "./ListingApprovals.jsx";
+
+// STUDENT FAVOURITES AND BOARDING DETAILS
+
+import StudentFavourites from "./StudentFavourites.jsx";
+import BoardingDetails from "./BoardingDetails.jsx";
+
+// NEW ADMIN OWNER VERIFICATION MODULE
+
+import OwnerVerification from "./OwnerVerification.jsx";
 
 // ====================================
 // APPLICATION ROUTES
@@ -49,12 +50,12 @@ import ListingApprovals from "./ListingApprovals.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+
     <BrowserRouter>
+
       <Routes>
 
-        {/* ============================= */}
-        {/* PUBLIC PAGES - SALHA'S CODE */}
-        {/* ============================= */}
+        {/* PUBLIC PAGES */}
 
         <Route
           path="/"
@@ -76,9 +77,7 @@ createRoot(document.getElementById("root")).render(
           element={<Register />}
         />
 
-        {/* ============================= */}
         {/* STUDENT HOME */}
-        {/* ============================= */}
 
         <Route
           path="/student-home"
@@ -89,24 +88,24 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY STUDENT HOME TESTING */}
         <Route
           path="/test-student"
           element={<StudentHome />}
         />
 
-        {/* ============================= */}
         {/* STUDENT FILTERS */}
-        {/* ============================= */}
 
         <Route
           path="/student-filters"
           element={<StudentFilters />}
         />
 
-        {/* ============================= */}
-        {/* STUDENT PROFILE SUMMARY */}
-        {/* ============================= */}
+        <Route
+          path="/test-student-filters"
+          element={<StudentFilters />}
+        />
+
+        {/* STUDENT PROFILE */}
 
         <Route
           path="/student-profile"
@@ -117,15 +116,14 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY STUDENT PROFILE TESTING */}
         <Route
           path="/test-student-profile"
-          element={<UserProfile role="student" />}
+          element={
+            <UserProfile role="student" />
+          }
         />
 
-        {/* ============================= */}
         {/* EDIT STUDENT PROFILE */}
-        {/* ============================= */}
 
         <Route
           path="/student-profile/edit"
@@ -139,7 +137,6 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY STUDENT EDIT TESTING */}
         <Route
           path="/test-student-profile/edit"
           element={
@@ -150,9 +147,39 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* ============================= */}
+        {/* STUDENT FAVOURITES */}
+
+        <Route
+          path="/favourites"
+          element={
+            <RequireRole role="student">
+              <StudentFavourites />
+            </RequireRole>
+          }
+        />
+
+        <Route
+          path="/test-favourites"
+          element={<StudentFavourites />}
+        />
+
+        {/* BOARDING DETAILS */}
+
+        <Route
+          path="/boarding-details/:id"
+          element={
+            <RequireRole role="student">
+              <BoardingDetails />
+            </RequireRole>
+          }
+        />
+
+        <Route
+          path="/test-boarding-details/:id"
+          element={<BoardingDetails />}
+        />
+
         {/* OWNER HOME */}
-        {/* ============================= */}
 
         <Route
           path="/owner-home"
@@ -163,15 +190,12 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY OWNER HOME TESTING */}
         <Route
           path="/test-owner"
           element={<OwnerHome />}
         />
 
-        {/* ============================= */}
-        {/* OWNER PROFILE SUMMARY */}
-        {/* ============================= */}
+        {/* OWNER PROFILE */}
 
         <Route
           path="/owner-profile"
@@ -182,15 +206,14 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY OWNER PROFILE TESTING */}
         <Route
           path="/test-owner-profile"
-          element={<UserProfile role="owner" />}
+          element={
+            <UserProfile role="owner" />
+          }
         />
 
-        {/* ============================= */}
         {/* EDIT OWNER PROFILE */}
-        {/* ============================= */}
 
         <Route
           path="/owner-profile/edit"
@@ -204,7 +227,6 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY OWNER EDIT TESTING */}
         <Route
           path="/test-owner-profile/edit"
           element={
@@ -215,9 +237,7 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* ============================= */}
         {/* ADMIN DASHBOARD */}
-        {/* ============================= */}
 
         <Route
           path="/admin-dashboard"
@@ -228,15 +248,12 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY ADMIN DASHBOARD TESTING */}
         <Route
           path="/test-admin-dashboard"
           element={<AdminDashboard />}
         />
 
-        {/* ============================= */}
         {/* ADMIN LISTING APPROVALS */}
-        {/* ============================= */}
 
         <Route
           path="/listing-approvals"
@@ -247,15 +264,32 @@ createRoot(document.getElementById("root")).render(
           }
         />
 
-        {/* TEMPORARY ADMIN APPROVALS TESTING */}
         <Route
           path="/test-listing-approvals"
           element={<ListingApprovals />}
         />
 
-        {/* ============================= */}
+        {/* ==================================== */}
+        {/* NEW ADMIN OWNER VERIFICATION MODULE */}
+        {/* ==================================== */}
+
+        <Route
+          path="/owner-verification"
+          element={
+            <RequireRole role="admin">
+              <OwnerVerification />
+            </RequireRole>
+          }
+        />
+
+        {/* TEMPORARY OWNER VERIFICATION TESTING */}
+
+        <Route
+          path="/test-owner-verification"
+          element={<OwnerVerification />}
+        />
+
         {/* CREATE LISTING - SALHA'S CODE */}
-        {/* ============================= */}
 
         <Route
           path="/create-listing"
@@ -267,6 +301,8 @@ createRoot(document.getElementById("root")).render(
         />
 
       </Routes>
+
     </BrowserRouter>
+
   </StrictMode>
 );
