@@ -2,7 +2,8 @@ import { useRef, useState } from "react";
 import { FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import DashboardLayout from "./DashboardLayout.jsx";
 import ListingCard from "./ListingCard.jsx";
-import { allListings, myListings } from "./listingsData.js";
+import { allListings } from "./listingsData.js";
+import { getOwnerListings } from "./listingsStore.js";
 import { Link } from "react-router-dom";
 
 export default function OwnerHome() {
@@ -10,7 +11,7 @@ export default function OwnerHome() {
   const scroller = useRef(null);
   const q = query.trim().toLowerCase();
   const match = (l) => `${l.type} ${l.place}`.toLowerCase().includes(q);
-  const mine = myListings.filter(match);
+  const mine = getOwnerListings().filter(match);
   const all = allListings.filter(match);
 
   const scrollBy = (dir) => scroller.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
@@ -37,14 +38,18 @@ export default function OwnerHome() {
       <div className="mb-5 mt-12 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-4xl font-bold text-[#E5B95C]">My Listings</h2>
         <div className="flex items-center gap-4">
-          <Link to="/create-listing" className="bg-[#2F7FD0] px-5 py-2 text-lg font-semibold text-white hover:bg-[#2569b0]">
-  + Add New Listings</Link>
+          <Link
+            to="/create-listing"
+            className="inline-block bg-[#2F7FD0] px-5 py-2 text-lg font-semibold text-white hover:bg-[#2569b0]"
+          >
+            + Add New Listings
+          </Link>
           <button onClick={() => scrollBy(-1)} aria-label="Previous listings" className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D9D9D9] text-black hover:bg-white">
             <FiChevronLeft size={24} />
           </button>
           <button onClick={() => scrollBy(1)} aria-label="Next listings" className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D9D9D9] text-black hover:bg-white">
             <FiChevronRight size={24} />
-         </button>
+          </button>
         </div>
       </div>
 
