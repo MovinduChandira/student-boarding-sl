@@ -1,16 +1,7 @@
+
 import { useState } from "react";
-
-import {
-  Link,
-  useLocation,
-} from "react-router-dom";
-
-import {
-  FiSearch,
-  FiWifi,
-  FiArrowLeft,
-} from "react-icons/fi";
-
+import { Link } from "react-router-dom";
+import { FiSearch, FiWifi, FiArrowLeft } from "react-icons/fi";
 import SearchFilters from "./SearchFilters.jsx";
 import { allListings } from "./listingsData.js";
 import { Footer } from "./App.jsx";
@@ -24,36 +15,17 @@ const initialFilters = {
 };
 
 export default function StudentFilters() {
-  const [filters, setFilters] =
-    useState(initialFilters);
-
+  const [filters, setFilters] = useState(initialFilters);
   const [query, setQuery] = useState("");
-
-  const [sortBy, setSortBy] =
-    useState("recommended");
-
-  const location = useLocation();
-
-  const isTesting =
-    location.pathname.startsWith("/test-");
-
-  const homePath = isTesting
-    ? "/test-student"
-    : "/student-home";
-
-  const detailsPath = isTesting
-    ? "/test-boarding-details"
-    : "/boarding-details";
+  const [sortBy, setSortBy] = useState("recommended");
 
   const getPrice = (listing) =>
-    Number(
-      String(listing.price).replace(/[^0-9]/g, "")
-    );
+    Number(String(listing.price).replace(/[^0-9]/g, ""));
 
   const results = allListings
     .filter((listing) => {
       const matchesSearch =
-        `${listing.title} ${listing.type} ${listing.place}`
+        `${listing.type} ${listing.place}`
           .toLowerCase()
           .includes(query.trim().toLowerCase());
 
@@ -64,6 +36,7 @@ export default function StudentFilters() {
       const matchesRent =
         getPrice(listing) <= filters.maxRent;
 
+      // Missing metadata must not be treated as a match.
       const matchesDistance =
         typeof listing.distanceKm === "number" &&
         listing.distanceKm <= filters.distance;
@@ -91,130 +64,84 @@ export default function StudentFilters() {
         matchesFacilities
       );
     })
-
     .sort((a, b) => {
-      if (sortBy === "low")
-        return getPrice(a) - getPrice(b);
-
-      if (sortBy === "high")
-        return getPrice(b) - getPrice(a);
-
+      if (sortBy === "low") return getPrice(a) - getPrice(b);
+      if (sortBy === "high") return getPrice(b) - getPrice(a);
       if (sortBy === "nearest")
         return a.distanceKm - b.distanceKm;
-
       return 0;
     });
 
   return (
     <div className="min-h-screen bg-linear-to-b from-[#0A4682] to-[#1B73C4] font-['Albert_Sans',sans-serif] text-white">
-
       <div className="mx-auto max-w-7xl px-5 py-6 md:px-8">
 
-        {/* HEADER */}
-
+        {/* Header */}
         <header className="mb-8 flex flex-wrap items-center gap-5 rounded-full border border-white/40 bg-[#104D87] px-5 py-3">
-
-          <Link to={homePath}>
-
+          <Link to="/test-student">
             <img
               src="/images/logo.png"
               alt="Boarding.lk"
               className="w-36 object-contain"
             />
-
           </Link>
 
           <label className="flex min-w-[200px] flex-1 items-center gap-3 rounded-full bg-white px-4 py-2 text-gray-800">
-
             <input
               value={query}
-              onChange={(e) =>
-                setQuery(e.target.value)
-              }
+              onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by university or location"
               className="w-full outline-none"
             />
-
             <FiSearch />
-
           </label>
-
         </header>
 
-        {/* TITLE AND SORTING */}
-
+        {/* Title and sorting */}
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-
           <h1 className="text-3xl font-bold text-[#E5B95C]">
             Filters
           </h1>
 
           <label className="flex items-center gap-3">
-
             <span>Sort by</span>
-
             <select
               value={sortBy}
-              onChange={(e) =>
-                setSortBy(e.target.value)
-              }
+              onChange={(e) => setSortBy(e.target.value)}
               className="rounded bg-white px-4 py-2 text-gray-800"
             >
-
-              <option value="recommended">
-                Recommended
-              </option>
-
-              <option value="low">
-                Price: Low to High
-              </option>
-
-              <option value="high">
-                Price: High to Low
-              </option>
-
-              <option value="nearest">
-                Nearest First
-              </option>
-
+              <option value="recommended">Recommended</option>
+              <option value="low">Price: Low to High</option>
+              <option value="high">Price: High to Low</option>
+              <option value="nearest">Nearest First</option>
             </select>
-
           </label>
-
         </div>
 
-        {/* MAIN CONTENT */}
-
+        {/* Main content */}
         <div className="grid items-start gap-6 md:grid-cols-[260px_minmax(0,1fr)]">
-
           <SearchFilters
             filters={filters}
             setFilters={setFilters}
           />
 
           <section className="min-w-0 space-y-4">
-
             <p className="text-sm text-white/80">
               {results.length} boarding listings found
             </p>
 
             {results.length === 0 && (
               <div className="rounded-lg bg-[#3886C8] p-6">
-
                 No listings match your selected filters.
                 Try clearing some filters.
-
               </div>
             )}
 
             {results.map((listing) => (
-
-              <Link
+              <article
                 key={listing.id}
-                to={`${detailsPath}/${listing.id}`}
-                className="flex cursor-pointer flex-col gap-4 rounded-md bg-[#3886C8] p-4 transition-colors hover:bg-[#4795D5] sm:flex-row"
+                className="flex flex-col gap-4 rounded-md bg-[#3886C8] p-4 sm:flex-row"
               >
-
                 <img
                   src={listing.img}
                   alt={listing.type}
@@ -222,7 +149,6 @@ export default function StudentFilters() {
                 />
 
                 <div className="min-w-0 flex-1">
-
                   <h3 className="text-xl font-bold">
                     {listing.title || listing.type}
                   </h3>
@@ -240,59 +166,35 @@ export default function StudentFilters() {
                   </p>
 
                   <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-
-                    {(listing.facilities || []).map(
-                      (facility) => (
-
-                        <span
-                          key={facility}
-                          className="flex items-center gap-1"
-                        >
-
-                          {facility === "Wi-Fi" && (
-                            <FiWifi />
-                          )}
-
-                          {facility}
-
-                        </span>
-
-                      )
-                    )}
-
+                    {(listing.facilities || []).map((facility) => (
+                      <span
+                        key={facility}
+                        className="flex items-center gap-1"
+                      >
+                        {facility === "Wi-Fi" && <FiWifi />}
+                        {facility}
+                      </span>
+                    ))}
                   </div>
-
                 </div>
-
-              </Link>
-
+              </article>
             ))}
-
           </section>
-
         </div>
 
-        {/* BACK BUTTON */}
-
+        {/* Back Button */}
         <div className="mt-8">
-
           <Link
-            to={homePath}
+            to="/test-student"
             className="inline-flex items-center gap-2 rounded bg-[#64A8E1] px-6 py-3 font-semibold text-white hover:bg-[#3886C8]"
           >
-
             <FiArrowLeft />
-
             Back to Home
-
           </Link>
-
         </div>
-
       </div>
 
       <Footer />
-
     </div>
   );
 }
