@@ -1,17 +1,5 @@
 import { useState } from "react";
 import { FiHeart, FiMapPin } from "react-icons/fi";
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { Link, useLocation } from "react-router-dom";
-import {
-  useFavourites,
-  toggleFavourite,
-} from "./favouritesStorage.js";
-=======
->>>>>>> parent of 7debb87 (Merge remote-tracking branch 'origin/frontendSalha' into backendYenuli)
-=======
-import { Link } from "react-router-dom";
->>>>>>> parent of 1c46773 (Merge branch 'frontendWandana' into backendYenuli)
 
 const badgeStyles = {
   Active: "border-[#4CAF50] bg-[#C8F0C8] text-[#1B7A1B]",
@@ -28,6 +16,7 @@ const badgeStyles = {
 export default function ListingCard({ item, variant = "browse" }) {
   const [liked, setLiked] = useState(false);
   const mine = variant === "mine";
+  const picture = item.img || item.image;
 
   return (
     <article
@@ -40,19 +29,11 @@ export default function ListingCard({ item, variant = "browse" }) {
           {item.status}
         </span>
       )}
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
->>>>>>> parent of 1c46773 (Merge branch 'frontendWandana' into backendYenuli)
       {picture ? (
         <img src={picture} alt={item.type} className="h-[190px] w-full object-cover" />
       ) : (
         <div className="flex h-[190px] w-full items-center justify-center bg-gray-300 text-gray-500">No image</div>
       )}
-=======
-      <img src={item.img} alt={item.type} className="h-[190px] w-full object-cover" />
->>>>>>> parent of 7debb87 (Merge remote-tracking branch 'origin/frontendSalha' into backendYenuli)
 
       <div className="flex flex-1 flex-col px-5 pb-5 pt-3">
         {mine ? (

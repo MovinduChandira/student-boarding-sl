@@ -14,16 +14,6 @@ import CreateListing from "./CreateListing.jsx";
 import StudentFilters from "./StudentFilters.jsx";
 import UserProfile from "./UserProfile.jsx";
 import ListingApprovals from "./ListingApprovals.jsx";
-<<<<<<< HEAD
-<<<<<<< HEAD
-import StudentFavourites from "./StudentFavourites.jsx";
-import BoardingDetails from "./BoardingDetails.jsx";
-import OwnerVerification from "./OwnerVerification.jsx";
-=======
->>>>>>> parent of 1c46773 (Merge branch 'frontendWandana' into backendYenuli)
-import MyListings from "./MyListings.jsx";
-=======
->>>>>>> parent of 7debb87 (Merge remote-tracking branch 'origin/frontendSalha' into backendYenuli)
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
