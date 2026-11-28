@@ -15,10 +15,13 @@ import CreateListing from "./CreateListing.jsx";
 import StudentFilters from "./StudentFilters.jsx";
 import UserProfile from "./UserProfile.jsx";
 import ListingApprovals from "./ListingApprovals.jsx";
+<<<<<<< HEAD
 import StudentFavourites from "./StudentFavourites.jsx";
 import BoardingDetails from "./BoardingDetails.jsx";
 import OwnerVerification from "./OwnerVerification.jsx";
 import MyListings from "./MyListings.jsx";
+=======
+>>>>>>> parent of 7debb87 (Merge remote-tracking branch 'origin/frontendSalha' into backendYenuli)
 
 
 createRoot(document.getElementById("root")).render(
@@ -63,8 +66,6 @@ createRoot(document.getElementById("root")).render(
         <Route path="/listing-approvals" element={<RequireRole role="admin"><ListingApprovals /></RequireRole>} />
         <Route path="/test-listing-approvals" element={<ListingApprovals />} />
         <Route path="/create-listing" element={<RequireRole role="owner"><CreateListing /></RequireRole>} />
-        <Route path="/edit-listing/:id" element={<RequireRole role="owner"><CreateListing /></RequireRole>} />
-        <Route path="/my-listings" element={<RequireRole role="owner"><MyListings /></RequireRole>} />
       </Routes>
 
     </BrowserRouter>

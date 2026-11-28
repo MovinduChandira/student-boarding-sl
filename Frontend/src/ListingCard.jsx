@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { FiHeart, FiMapPin } from "react-icons/fi";
+<<<<<<< HEAD
 import { Link, useLocation } from "react-router-dom";
 import {
   useFavourites,
   toggleFavourite,
 } from "./favouritesStorage.js";
+=======
+>>>>>>> parent of 7debb87 (Merge remote-tracking branch 'origin/frontendSalha' into backendYenuli)
 
 const badgeStyles = {
   Active: "border-[#4CAF50] bg-[#C8F0C8] text-[#1B7A1B]",
@@ -29,7 +32,6 @@ export default function ListingCard({
   const location = useLocation();
 
   const mine = variant === "mine";
-  const picture = item.img || item.image; // sample data uses img, saved listings use image
 
   const liked = student
     ? favourites.includes(item.id)
@@ -62,10 +64,11 @@ export default function ListingCard({
       {/* OWNER STATUS BADGE */}
 
       {mine && (
-        <span className={`absolute left-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badgeStyles[item.status] ?? badgeStyles.Inactive}`}>
+        <span className={`absolute left-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badgeStyles[item.status]}`}>
           {item.status}
         </span>
       )}
+<<<<<<< HEAD
 
       {picture ? (
         student && !mine ? (
@@ -79,6 +82,9 @@ export default function ListingCard({
         <div className="flex h-[190px] w-full items-center justify-center bg-gray-300 text-gray-500">No image</div>
 
       )}
+=======
+      <img src={item.img} alt={item.type} className="h-[190px] w-full object-cover" />
+>>>>>>> parent of 7debb87 (Merge remote-tracking branch 'origin/frontendSalha' into backendYenuli)
 
       <div className="flex flex-1 flex-col px-5 pb-5 pt-3">
 
@@ -86,16 +92,13 @@ export default function ListingCard({
           <>
             <h3 className="text-xl font-bold">{item.type}</h3>
             <p className="mt-1 text-lg font-semibold">{item.price}</p>
-            <p className="mb-4 mt-1 flex items-start gap-1.5 text-sm text-gray-500">
+            <p className="mt-1 flex items-start gap-1.5 text-sm text-gray-500">
               <FiMapPin className="mt-0.5 shrink-0" size={16} />
               <span>{item.place}</span>
             </p>
-            <Link
-              to={`/edit-listing/${item.id}`}
-              className="mt-auto block w-full bg-[#2F7FD0] py-2.5 text-center text-lg font-semibold text-white hover:bg-[#2569b0]"
-            >
+            <button className="mt-auto w-full bg-[#2F7FD0] py-2.5 pt-2.5 text-lg font-semibold text-white hover:bg-[#2569b0]">
               Edit
-            </Link>
+            </button>
           </>
         ) : (
           <>
