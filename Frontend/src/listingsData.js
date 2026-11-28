@@ -117,4 +117,5 @@ export const myListings = [
   { id: 103, status: "Featured", type: "Twin Room", place: "Maharagama, Colombo", price: "Rs. 12,000/ month", img: "/images/twin-room-2.jpg" },
   { id: 104, status: "Inactive", type: "Single Room", place: "Nugegoda, Colombo", price: "Rs. 16,000/ month", img: "/images/single-room-2.jpg" },
   { id: 105, status: "Active", type: "Twin Room", place: "Nugegoda, Colombo", price: "Rs. 12,000/ month", img: "/images/twin-room.jpg" },
+];
 
