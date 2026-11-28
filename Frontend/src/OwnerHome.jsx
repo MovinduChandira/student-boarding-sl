@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { FiSearch, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import DashboardLayout from "./DashboardLayout.jsx";
 import ListingCard from "./ListingCard.jsx";
-import { allListings, myListings } from "./listingsData.js";
+import { allListings } from "./listingsData.js";
+import { getOwnerListings } from "./listingsStore.js";
 import { Link } from "react-router-dom";
 import { listingsApi } from "./api.js";
 
@@ -57,7 +58,10 @@ export default function OwnerHome() {
       <div className="mb-5 mt-12 flex flex-wrap items-center justify-between gap-4">
         <h2 className="text-4xl font-bold text-[#E5B95C]">My Listings</h2>
         <div className="flex items-center gap-4">
-          <Link to="/create-listing" className="bg-[#2F7FD0] px-5 py-2 text-lg font-semibold text-white hover:bg-[#2569b0]">
+          <Link
+            to="/create-listing"
+            className="inline-block bg-[#2F7FD0] px-5 py-2 text-lg font-semibold text-white hover:bg-[#2569b0]"
+          >
             + Add New Listings
           </Link>
           <button onClick={() => scrollBy(-1)} aria-label="Previous listings" className="flex h-11 w-11 items-center justify-center rounded-full bg-[#D9D9D9] text-black hover:bg-white">

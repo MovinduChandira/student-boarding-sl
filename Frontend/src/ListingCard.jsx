@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiHeart, FiMapPin } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const badgeStyles = {
   Active: "border-[#4CAF50] bg-[#C8F0C8] text-[#1B7A1B]",
@@ -16,6 +17,7 @@ const badgeStyles = {
 export default function ListingCard({ item, variant = "browse" }) {
   const [liked, setLiked] = useState(false);
   const mine = variant === "mine";
+  const picture = item.img || item.image; // sample data uses img, saved listings use image
 
   return (
     <article
@@ -24,24 +26,31 @@ export default function ListingCard({ item, variant = "browse" }) {
       }`}
     >
       {mine && (
-        <span className={`absolute left-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badgeStyles[item.status]}`}>
+        <span className={`absolute left-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badgeStyles[item.status] ?? badgeStyles.Inactive}`}>
           {item.status}
         </span>
       )}
-      <img src={item.img} alt={item.type} className="h-[190px] w-full object-cover" />
+      {picture ? (
+        <img src={picture} alt={item.type} className="h-[190px] w-full object-cover" />
+      ) : (
+        <div className="flex h-[190px] w-full items-center justify-center bg-gray-300 text-gray-500">No image</div>
+      )}
 
       <div className="flex flex-1 flex-col px-5 pb-5 pt-3">
         {mine ? (
           <>
             <h3 className="text-xl font-bold">{item.type}</h3>
             <p className="mt-1 text-lg font-semibold">{item.price}</p>
-            <p className="mt-1 flex items-start gap-1.5 text-sm text-gray-500">
+            <p className="mb-4 mt-1 flex items-start gap-1.5 text-sm text-gray-500">
               <FiMapPin className="mt-0.5 shrink-0" size={16} />
               <span>{item.place}</span>
             </p>
-            <button className="mt-auto w-full bg-[#2F7FD0] py-2.5 pt-2.5 text-lg font-semibold text-white hover:bg-[#2569b0]">
+            <Link
+              to={`/edit-listing/${item.id}`}
+              className="mt-auto block w-full bg-[#2F7FD0] py-2.5 text-center text-lg font-semibold text-white hover:bg-[#2569b0]"
+            >
               Edit
-            </button>
+            </Link>
           </>
         ) : (
           <>

@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FiCheck, FiChevronDown, FiUser } from "react-icons/fi";
 import { Footer } from "./App.jsx";
 import { listingsApi } from "./api.js";
+import ImageUploader from "./ImageUploader.jsx";
+import { getListing } from "./listingsStore.js";
 
 const propertyTypes = ["Single Room", "Twin Room", "Shared Room", "Shared Dorm"];
 const rentPeriods = ["Monthly", "Weekly", "Daily"];
+const periodWord = { Monthly: "month", Weekly: "week", Daily: "day" };
 const facilityOptions = ["WiFi", "AC", "Kitchen", "Parking", "Attached washroom", "Meal provided", "Cooking allowed"];
 const genderOptions = ["Male", "Female"];
 
@@ -32,18 +35,21 @@ function Checkbox({ label, checked, onChange }) {
 
 export default function CreateListing() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const existing = id ? getListing(id) : null;
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(existing?.images ?? []);
   const [form, setForm] = useState({
-    title: "",
-    address: "",
-    description: "",
-    propertyType: propertyTypes[0],
-    rent: "",
-    rentPeriod: rentPeriods[0],
-    facilities: [],
-    genderPreference: [],
+    title: existing?.title ?? "",
+    address: existing?.address ?? "",
+    description: existing?.description ?? "",
+    propertyType: existing?.propertyType ?? propertyTypes[0],
+    rent: existing?.rent ?? "",
+    rentPeriod: existing?.rentPeriod ?? rentPeriods[0],
+    facilities: existing?.facilities ?? [],
+    genderPreference: existing?.genderPreference ?? [],
   });
 
   const update = (field) => (e) => setForm({ ...form, [field]: e.target.value });
@@ -53,10 +59,6 @@ export default function CreateListing() {
       ...f,
       [field]: f[field].includes(value) ? f[field].filter((v) => v !== value) : [...f[field], value],
     }));
-
-  // Thumbnails for the chosen images (released when the selection changes)
-  const previews = useMemo(() => images.map((file) => URL.createObjectURL(file)), [images]);
-  useEffect(() => () => previews.forEach((url) => URL.revokeObjectURL(url)), [previews]);
 
   function logout() {
     localStorage.removeItem("user");
@@ -93,7 +95,9 @@ export default function CreateListing() {
             <Link to="/owner-home">
               <img src="/images/logo.png" alt="boarding.lk" className="h-[60px] w-[140px] object-contain md:h-[90px] md:w-[220px]" />
             </Link>
-            <h1 className="text-2xl font-bold text-[#E5B95C] md:text-4xl">Create New Listing</h1>
+            <h1 className="text-2xl font-bold text-[#E5B95C] md:text-4xl">
+              {existing ? "Edit Listing" : "Create New Listing"}
+            </h1>
           </div>
 
           <div className="relative">
@@ -190,30 +194,9 @@ export default function CreateListing() {
               <p className="mt-2 text-sm text-white/80">Leave both unticked, or tick both, if anyone can apply.</p>
             </fieldset>
 
-            <div className="rounded-lg border border-black/20 bg-[#D9D9D9] p-4 text-black">
-              <p className="text-lg font-bold">Upload images</p>
-              <div className="mt-3 flex flex-wrap items-center gap-4">
-                <label className="cursor-pointer rounded-xl bg-[#8CBBEB] px-8 py-3 text-lg hover:bg-[#79aee4]">
-                  Choose images
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="sr-only"
-                    onChange={(e) => setImages(Array.from(e.target.files))}
-                  />
-                </label>
-                <span className="flex-1 text-center">
-                  {images.length === 0 ? "No image chosen" : `${images.length} image${images.length > 1 ? "s" : ""} chosen`}
-                </span>
-              </div>
-              {previews.length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {previews.map((src, i) => (
-                    <img key={src} src={src} alt={`Selected ${i + 1}`} className="h-16 w-16 rounded-md object-cover" />
-                  ))}
-                </div>
-              )}
+            <div>
+              <p className="mb-2 text-lg font-bold">Upload images</p>
+              <ImageUploader images={images} onChange={setImages} />
             </div>
 
             <div className="flex flex-wrap gap-8 pt-4">
@@ -225,7 +208,7 @@ export default function CreateListing() {
                 Save as Draft
               </button>
               <button className="w-48 rounded-xl bg-[#8CBBEB] py-4 text-xl font-bold text-black hover:bg-[#79aee4]">
-                Publish
+                {existing ? "Save Changes" : "Publish"}
               </button>
             </div>
 
